@@ -30,14 +30,12 @@ pub const DeviceList = struct {
         const n = c.libusb_get_device_list(ctx.ctx, &list);
 
         if (n < 0) {
-            return errorFromLibusb(
-                std.math.cast(c_int, n) catch unreachable,
-            );
+            return errorFromLibusb(@intCast(c_int, n));
         } else {
             return DeviceList{
                 .ctx = ctx,
                 .list = list,
-                .len = std.math.cast(usize, n) catch unreachable,
+                .len = @intCast(usize, n),
             };
         }
     }

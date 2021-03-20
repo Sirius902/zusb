@@ -63,7 +63,7 @@ pub const DeviceHandle = struct {
         if (res < 0) {
             return errorFromLibusb(res);
         } else {
-            return std.math.cast(usize, res) catch unreachable;
+            return @intCast(usize, res);
         }
     }
 
@@ -89,7 +89,7 @@ pub const DeviceHandle = struct {
         );
 
         if (ret == 0 or ret == c.LIBUSB_ERROR_INTERRUPTED and transferred > 0) {
-            return std.math.cast(usize, transferred) catch unreachable;
+            return @intCast(usize, transferred);
         } else {
             return errorFromLibusb(ret);
         }
@@ -117,7 +117,7 @@ pub const DeviceHandle = struct {
         );
 
         if (ret == 0 or ret == c.LIBUSB_ERROR_INTERRUPTED and transferred > 0) {
-            return std.math.cast(usize, transferred) catch unreachable;
+            return @intCast(usize, transferred);
         } else {
             return errorFromLibusb(ret);
         }
