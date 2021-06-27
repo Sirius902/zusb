@@ -25,10 +25,7 @@ pub const Interfaces = struct {
         if (self.i < self.interfaces.len) {
             defer self.i += 1;
 
-            const len = std.math.cast(
-                usize,
-                self.interfaces[self.i].num_altsetting,
-            ) catch unreachable;
+            const len = @intCast(usize, self.interfaces[self.i].num_altsetting);
 
             return Interface{
                 .iter = self.interfaces[self.i].altsetting[0..len],
