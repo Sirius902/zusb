@@ -10,3 +10,7 @@ pub usingnamespace @import("src/error.zig");
 pub usingnamespace @import("src/fields.zig");
 pub usingnamespace @import("src/interface_descriptor.zig");
 pub usingnamespace @import("src/transfer.zig");
+
+comptime {
+    @import("std").testing.refAllDecls(@This());
+}

@@ -1,6 +1,10 @@
 const c = @import("c.zig");
 const std = @import("std");
 const Allocator = std.mem.Allocator;
+const DeviceHandle = @import("device_handle.zig").DeviceHandle;
+
+const Error = @import("error.zig").Error;
+const failable = @import("error.zig").failable;
 
 /// WIP
 pub fn Transfer(comptime T: type) type {
@@ -77,7 +81,7 @@ pub fn Transfer(comptime T: type) type {
 
                 return self;
             } else {
-                return Error.OutOfMemory;
+                return error.OutOfMemory;
             }
         }
 

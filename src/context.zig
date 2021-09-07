@@ -3,7 +3,8 @@ const DeviceHandle = @import("device_handle.zig").DeviceHandle;
 const DeviceList = @import("device_list.zig").DeviceList;
 const fromLibusb = @import("constructor.zig").fromLibusb;
 
-usingnamespace @import("error.zig");
+const Error = @import("error.zig").Error;
+const failable = @import("error.zig").failable;
 
 pub const Context = struct {
     raw: *c.libusb_context,

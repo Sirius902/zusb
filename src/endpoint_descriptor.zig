@@ -1,5 +1,6 @@
 const c = @import("c.zig");
 const Direction = @import("fields.zig").Direction;
+const TransferType = @import("fields.zig").TransferType;
 
 pub const EndpointDescriptor = struct {
     descriptor: *const c.libusb_endpoint_descriptor,

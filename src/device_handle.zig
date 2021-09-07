@@ -4,7 +4,9 @@ const Context = @import("context.zig").Context;
 const Device = @import("device.zig").Device;
 const fromLibusb = @import("constructor.zig").fromLibusb;
 
-usingnamespace @import("error.zig");
+const Error = @import("error.zig").Error;
+const failable = @import("error.zig").failable;
+const errorFromLibusb = @import("error.zig").errorFromLibusb;
 
 pub const DeviceHandle = struct {
     ctx: *Context,
@@ -46,7 +48,7 @@ pub const DeviceHandle = struct {
         timeout_ms: u64,
     ) (error{Overflow} || Error)!usize {
         if (requestType & c.LIBUSB_ENDPOINT_DIR_MASK != c.LIBUSB_ENDPOINT_OUT) {
-            return Error.InvalidParam;
+            return error.InvalidParam;
         }
 
         const res = c.libusb_control_transfer(
@@ -74,7 +76,7 @@ pub const DeviceHandle = struct {
         timeout_ms: u64,
     ) (error{Overflow} || Error)!usize {
         if (endpoint & c.LIBUSB_ENDPOINT_DIR_MASK != c.LIBUSB_ENDPOINT_IN) {
-            return Error.InvalidParam;
+            return error.InvalidParam;
         }
 
         var transferred: c_int = undefined;
@@ -102,7 +104,7 @@ pub const DeviceHandle = struct {
         timeout_ms: u64,
     ) (error{Overflow} || Error)!usize {
         if (endpoint & c.LIBUSB_ENDPOINT_DIR_MASK != c.LIBUSB_ENDPOINT_OUT) {
-            return Error.InvalidParam;
+            return error.InvalidParam;
         }
 
         var transferred: c_int = undefined;

@@ -1,9 +1,11 @@
 const c = @import("c.zig");
 const std = @import("std");
 const Context = @import("context.zig").Context;
+const Device = @import("device.zig").Device;
 const fromLibusb = @import("constructor.zig").fromLibusb;
 
-usingnamespace @import("error.zig");
+const Error = @import("error.zig").Error;
+const errorFromLibusb = @import("error.zig").errorFromLibusb;
 
 pub const Devices = struct {
     ctx: *Context,

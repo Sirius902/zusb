@@ -1,9 +1,12 @@
 const c = @import("c.zig");
 const ConfigDescriptor = @import("config_descriptor.zig").ConfigDescriptor;
 const Context = @import("context.zig").Context;
+const DeviceDescriptor = @import("device_descriptor.zig").DeviceDescriptor;
+const DeviceHandle = @import("device_handle.zig").DeviceHandle;
 const fromLibusb = @import("constructor.zig").fromLibusb;
 
-usingnamespace @import("error.zig");
+const Error = @import("error.zig").Error;
+const failable = @import("error.zig").failable;
 
 pub const Device = struct {
     ctx: *Context,
