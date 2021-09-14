@@ -4,9 +4,7 @@ const Context = @import("context.zig").Context;
 const Device = @import("device.zig").Device;
 const fromLibusb = @import("constructor.zig").fromLibusb;
 
-const Error = @import("error.zig").Error;
-const failable = @import("error.zig").failable;
-const errorFromLibusb = @import("error.zig").errorFromLibusb;
+const err = @import("error.zig");
 
 pub const DeviceHandle = struct {
     ctx: *Context,
@@ -24,13 +22,13 @@ pub const DeviceHandle = struct {
         c.libusb_close(self.raw);
     }
 
-    pub fn claimInterface(self: *DeviceHandle, iface: u8) Error!void {
-        try failable(c.libusb_claim_interface(self.raw, @as(c_int, iface)));
+    pub fn claimInterface(self: *DeviceHandle, iface: u8) err.Error!void {
+        try err.failable(c.libusb_claim_interface(self.raw, @as(c_int, iface)));
         self.interfaces |= @as(u256, 1) << iface;
     }
 
-    pub fn releaseInterface(self: *DeviceHandle, iface: u8) Error!void {
-        try failable(c.libusb_release_interface(self.raw, @as(c_int, iface)));
+    pub fn releaseInterface(self: *DeviceHandle, iface: u8) err.Error!void {
+        try err.failable(c.libusb_release_interface(self.raw, @as(c_int, iface)));
         self.interfaces &= ~(@as(u256, 1) << iface);
     }
 
@@ -46,7 +44,7 @@ pub const DeviceHandle = struct {
         index: u16,
         buf: []const u8,
         timeout_ms: u64,
-    ) (error{Overflow} || Error)!usize {
+    ) (error{Overflow} || err.Error)!usize {
         if (requestType & c.LIBUSB_ENDPOINT_DIR_MASK != c.LIBUSB_ENDPOINT_OUT) {
             return error.InvalidParam;
         }
@@ -63,7 +61,7 @@ pub const DeviceHandle = struct {
         );
 
         if (res < 0) {
-            return errorFromLibusb(res);
+            return err.errorFromLibusb(res);
         } else {
             return @intCast(usize, res);
         }
@@ -74,7 +72,7 @@ pub const DeviceHandle = struct {
         endpoint: u8,
         buf: []u8,
         timeout_ms: u64,
-    ) (error{Overflow} || Error)!usize {
+    ) (error{Overflow} || err.Error)!usize {
         if (endpoint & c.LIBUSB_ENDPOINT_DIR_MASK != c.LIBUSB_ENDPOINT_IN) {
             return error.InvalidParam;
         }
@@ -93,7 +91,7 @@ pub const DeviceHandle = struct {
         if (ret == 0 or ret == c.LIBUSB_ERROR_INTERRUPTED and transferred > 0) {
             return @intCast(usize, transferred);
         } else {
-            return errorFromLibusb(ret);
+            return err.errorFromLibusb(ret);
         }
     }
 
@@ -102,7 +100,7 @@ pub const DeviceHandle = struct {
         endpoint: u8,
         buf: []const u8,
         timeout_ms: u64,
-    ) (error{Overflow} || Error)!usize {
+    ) (error{Overflow} || err.Error)!usize {
         if (endpoint & c.LIBUSB_ENDPOINT_DIR_MASK != c.LIBUSB_ENDPOINT_OUT) {
             return error.InvalidParam;
         }
@@ -121,7 +119,7 @@ pub const DeviceHandle = struct {
         if (ret == 0 or ret == c.LIBUSB_ERROR_INTERRUPTED and transferred > 0) {
             return @intCast(usize, transferred);
         } else {
-            return errorFromLibusb(ret);
+            return err.errorFromLibusb(ret);
         }
     }
 };

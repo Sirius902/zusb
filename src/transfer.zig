@@ -3,8 +3,7 @@ const std = @import("std");
 const Allocator = std.mem.Allocator;
 const DeviceHandle = @import("device_handle.zig").DeviceHandle;
 
-const Error = @import("error.zig").Error;
-const failable = @import("error.zig").failable;
+const err = @import("error.zig");
 
 /// WIP
 pub fn Transfer(comptime T: type) type {
@@ -37,13 +36,13 @@ pub fn Transfer(comptime T: type) type {
             self.allocator.destroy(self);
         }
 
-        pub fn submit(self: *Self) Error!void {
+        pub fn submit(self: *Self) err.Error!void {
             self.transfer.user_data = self;
-            try failable(c.libusb_submit_transfer(@ptrCast(*c.libusb_transfer, self.transfer)));
+            try err.failable(c.libusb_submit_transfer(@ptrCast(*c.libusb_transfer, self.transfer)));
         }
 
-        pub fn cancel(self: *Self) Error!void {
-            try failable(c.libusb_cancel_transfer(@ptrCast(*c.libusb_transfer, self.transfer)));
+        pub fn cancel(self: *Self) err.Error!void {
+            try err.failable(c.libusb_cancel_transfer(@ptrCast(*c.libusb_transfer, self.transfer)));
         }
 
         pub fn buffer(self: Self) []u8 {
@@ -59,7 +58,7 @@ pub fn Transfer(comptime T: type) type {
             callback: fn (*Self) void,
             user_data: T,
             timeout: u64,
-        ) (Allocator.Error || Error)!*Self {
+        ) (Allocator.err.Error || err.Error)!*Self {
             const opt_transfer = @intToPtr(?*libusb_transfer, @ptrToInt(c.libusb_alloc_transfer(0)));
 
             if (opt_transfer) |transfer| {

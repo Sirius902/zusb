@@ -3,15 +3,14 @@ const DeviceHandle = @import("device_handle.zig").DeviceHandle;
 const DeviceList = @import("device_list.zig").DeviceList;
 const fromLibusb = @import("constructor.zig").fromLibusb;
 
-const Error = @import("error.zig").Error;
-const failable = @import("error.zig").failable;
+const err = @import("error.zig");
 
 pub const Context = struct {
     raw: *c.libusb_context,
 
-    pub fn init() Error!Context {
+    pub fn init() err.Error!Context {
         var ctx: ?*c.libusb_context = null;
-        try failable(c.libusb_init(&ctx));
+        try err.failable(c.libusb_init(&ctx));
 
         return Context{ .raw = ctx.? };
     }
@@ -20,7 +19,7 @@ pub const Context = struct {
         _ = c.libusb_exit(self.raw);
     }
 
-    pub fn devices(self: *Context) Error!DeviceList {
+    pub fn devices(self: *Context) err.Error!DeviceList {
         return DeviceList.init(self);
     }
 
@@ -28,7 +27,7 @@ pub const Context = struct {
         self: *Context,
         vendor_id: u16,
         product_id: u16,
-    ) Error!?DeviceHandle {
+    ) err.Error!?DeviceHandle {
         if (c.libusb_open_device_with_vid_pid(self.raw, vendor_id, product_id)) |handle| {
             return fromLibusb(DeviceHandle, .{ self, handle });
         } else {

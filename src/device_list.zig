@@ -4,8 +4,7 @@ const Context = @import("context.zig").Context;
 const Device = @import("device.zig").Device;
 const fromLibusb = @import("constructor.zig").fromLibusb;
 
-const Error = @import("error.zig").Error;
-const errorFromLibusb = @import("error.zig").errorFromLibusb;
+const err = @import("error.zig");
 
 pub const Devices = struct {
     ctx: *Context,
@@ -27,12 +26,12 @@ pub const DeviceList = struct {
     list: [*c]?*c.libusb_device,
     len: usize,
 
-    pub fn init(ctx: *Context) Error!DeviceList {
+    pub fn init(ctx: *Context) err.Error!DeviceList {
         var list: [*c]?*c.libusb_device = undefined;
         const n = c.libusb_get_device_list(ctx.ctx, &list);
 
         if (n < 0) {
-            return errorFromLibusb(@intCast(c_int, n));
+            return err.errorFromLibusb(@intCast(c_int, n));
         } else {
             return DeviceList{
                 .ctx = ctx,
