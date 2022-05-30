@@ -46,7 +46,7 @@ pub fn Transfer(comptime T: type) type {
         }
 
         pub fn buffer(self: Self) []u8 {
-            const length = std.math.cast(usize, self.transfer.length) catch @panic("Buffer length too large");
+            const length = std.math.cast(usize, self.transfer.length) orelse @panic("Buffer length too large");
             return self.transfer.buffer[0..length];
         }
 
@@ -65,9 +65,9 @@ pub fn Transfer(comptime T: type) type {
                 transfer.*.dev_handle = handle.handle;
                 transfer.*.endpoint = endpoint;
                 transfer.*.@"type" = c.LIBUSB_TRANSFER_TYPE_INTERRUPT;
-                transfer.*.timeout = std.math.cast(c_uint, timeout) catch @panic("Timeout too large");
+                transfer.*.timeout = std.math.cast(c_uint, timeout) orelse @panic("Timeout too large");
                 transfer.*.buffer = buf.ptr;
-                transfer.*.length = std.math.cast(c_int, buf.len) catch @panic("Length too large");
+                transfer.*.length = std.math.cast(c_int, buf.len) orelse @panic("Length too large");
                 transfer.*.callback = callbackRaw;
 
                 var self = try allocator.create(Self);

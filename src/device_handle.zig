@@ -56,8 +56,8 @@ pub const DeviceHandle = struct {
             value,
             index,
             @intToPtr([*c]u8, @ptrToInt(buf.ptr)),
-            try std.math.cast(u16, buf.len),
-            try std.math.cast(c_uint, timeout_ms),
+            std.math.cast(u16, buf.len) orelse return error.Overflow,
+            std.math.cast(c_uint, timeout_ms) orelse return error.Overflow,
         );
 
         if (res < 0) {
@@ -83,9 +83,9 @@ pub const DeviceHandle = struct {
             self.raw,
             endpoint,
             buf.ptr,
-            try std.math.cast(c_int, buf.len),
+            std.math.cast(c_int, buf.len) orelse return error.Overflow,
             &transferred,
-            try std.math.cast(c_uint, timeout_ms),
+            std.math.cast(c_uint, timeout_ms) orelse return error.Overflow,
         );
 
         if (ret == 0 or ret == c.LIBUSB_ERROR_INTERRUPTED and transferred > 0) {
@@ -111,9 +111,9 @@ pub const DeviceHandle = struct {
             self.raw,
             endpoint,
             @intToPtr([*c]u8, @ptrToInt(buf.ptr)),
-            try std.math.cast(c_int, buf.len),
+            std.math.cast(c_int, buf.len) orelse return error.Overflow,
             &transferred,
-            try std.math.cast(c_uint, timeout_ms),
+            std.math.cast(c_uint, timeout_ms) orelse return error.Overflow,
         );
 
         if (ret == 0 or ret == c.LIBUSB_ERROR_INTERRUPTED and transferred > 0) {
