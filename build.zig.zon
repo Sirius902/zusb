@@ -1,5 +1,5 @@
 .{
-    .name = "zusb",
+    .name = .zusb,
     .version = "0.0.1",
     .minimum_zig_version = "0.14.0",
     .dependencies = .{},
